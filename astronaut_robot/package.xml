@@ -3,8 +3,8 @@
 <package format="3">
   <name>astronaut_robot</name>
   <version>0.1.0</version>
-  <description>COMP219 spacecraft astronaut robot: mobile base + basic arm/gripper + task action server</description>
-  <maintainer email="you@example.com">Sanya</maintainer>
+  <description>ASTRA — Autonomous Spacecraft Task & Repair Agent</description>
+  <maintainer email="sanya.bansal.115@gmail.com">Sanya</maintainer>
   <license>MIT</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
