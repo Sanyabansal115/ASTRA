@@ -1,0 +1,16 @@
+# RobotTask.action
+# One shared action for everything the LLM teammate's node needs to trigger.
+# task_type is one of: "navigate", "grab", "fix"
+# For "navigate": target_name is a module name, x/y are its map coordinates
+# For "grab": target_name is the object name (e.g. "toolkit"); x/y unused
+# For "fix": target_name is the part/panel name (e.g. "engine_panel"); x/y unused
+
+string task_type
+string target_name
+float64 x
+float64 y
+---
+bool success
+string message
+---
+string status

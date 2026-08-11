@@ -1,0 +1,239 @@
+<?xml version="1.0"?>
+<robot name="astronaut_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!--
+    Keep-it-basic design:
+    - Mobile base: 2 driven wheels + 1 caster (same idea as the ROSBot in the Week 10 hospital nav lab)
+    - Arm: exactly 2 revolute joints (shoulder, elbow) — enough to reach toward an object, no wrist,
+      no inverse kinematics needed, waypoints are hand-picked (same trick as panda_swing_client.py)
+    - Gripper: 1 prismatic joint (open/close), single moving finger against a fixed one
+    - The "Cute Astronaut" glb mesh is a VISUAL-ONLY overlay on the chassis, same as the original
+      plan: real mechanics underneath, astronaut skin on top for looks. It does not drive anything.
+    Total actuated joints: left_wheel, right_wheel, shoulder_joint, elbow_joint, gripper_joint = 5.
+  -->
+
+  <material name="grey"><color rgba="0.6 0.6 0.6 1"/></material>
+  <material name="dark"><color rgba="0.2 0.2 0.2 1"/></material>
+
+  <!-- ===================== BASE ===================== -->
+  <link name="base_footprint"/>
+
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0.08" rpy="0 0 0"/>
+      <geometry><box size="0.30 0.24 0.16"/></geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.08" rpy="0 0 0"/>
+      <geometry><box size="0.30 0.24 0.16"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="4.0"/>
+      <origin xyz="0 0 0.08"/>
+      <inertia ixx="0.03" ixy="0" ixz="0" iyy="0.03" iyz="0" izz="0.03"/>
+    </inertial>
+  </link>
+
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0.05" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Astronaut mesh: pure visual skin, no collision, rides on top of the chassis -->
+  <link name="astronaut_visual_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <geometry>
+        <mesh filename="package://astronaut_robot/meshes/cute_astronaut.glb" scale="1 1 1"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="astronaut_visual_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="astronaut_visual_link"/>
+    <origin xyz="0 0 0.16" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Wheels -->
+  <xacro:macro name="wheel" params="prefix y_offset">
+    <link name="${prefix}_wheel">
+      <visual>
+        <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+        <geometry><cylinder radius="0.05" length="0.03"/></geometry>
+        <material name="dark"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+        <geometry><cylinder radius="0.05" length="0.03"/></geometry>
+      </collision>
+      <inertial>
+        <mass value="0.3"/>
+        <inertia ixx="0.0005" ixy="0" ixz="0" iyy="0.0005" iyz="0" izz="0.0005"/>
+      </inertial>
+    </link>
+    <joint name="${prefix}_wheel_joint" type="continuous">
+      <parent link="base_link"/>
+      <child link="${prefix}_wheel"/>
+      <origin xyz="0 ${y_offset} 0.05" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:wheel prefix="left" y_offset="0.14"/>
+  <xacro:wheel prefix="right" y_offset="-0.14"/>
+
+  <link name="caster_wheel">
+    <visual><geometry><sphere radius="0.03"/></geometry></visual>
+    <collision><geometry><sphere radius="0.03"/></geometry></collision>
+    <inertial><mass value="0.1"/><inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/></inertial>
+  </link>
+  <joint name="caster_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="caster_wheel"/>
+    <origin xyz="0.12 0 0.03" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ===================== LIDAR (required for obstacle detection + AMCL/costmaps) ===================== -->
+  <link name="lidar_link">
+    <visual>
+      <geometry><cylinder radius="0.035" length="0.04"/></geometry>
+      <material name="dark"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.035" length="0.04"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+    </inertial>
+  </link>
+
+  <joint name="lidar_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="lidar_link"/>
+    <!-- mounted at the front-top of the chassis, above the astronaut mesh's hips
+         so it isn't blocked by the model's own body -->
+    <origin xyz="0.10 0 0.34" rpy="0 0 0"/>
+  </joint>
+
+  <gazebo reference="lidar_link">
+    <sensor name="lidar" type="gpu_lidar">
+      <pose>0 0 0 0 0 0</pose>
+      <topic>scan</topic>
+      <update_rate>10</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>360</samples>
+            <resolution>1</resolution>
+            <min_angle>-3.14159</min_angle>
+            <max_angle>3.14159</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.12</min>
+          <max>10.0</max>
+          <resolution>0.01</resolution>
+        </range>
+      </ray>
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+    </sensor>
+  </gazebo>
+
+  <!-- ===================== ARM (2 joints, deliberately basic) ===================== -->
+  <link name="shoulder_link">
+    <visual><geometry><box size="0.04 0.04 0.14"/></geometry><material name="dark"/></visual>
+    <collision><geometry><box size="0.04 0.04 0.14"/></geometry></collision>
+    <inertial><mass value="0.3"/><inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/></inertial>
+  </link>
+
+  <joint name="shoulder_joint" type="revolute">
+    <parent link="base_link"/>
+    <child link="shoulder_link"/>
+    <origin xyz="0.14 0 0.20" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.57" upper="1.57" effort="10" velocity="1.0"/>
+  </joint>
+
+  <link name="forearm_link">
+    <visual><geometry><box size="0.04 0.04 0.12"/></geometry><material name="grey"/></visual>
+    <collision><geometry><box size="0.04 0.04 0.12"/></geometry></collision>
+    <inertial><mass value="0.2"/><inertia ixx="0.0005" ixy="0" ixz="0" iyy="0.0005" iyz="0" izz="0.0005"/></inertial>
+  </link>
+
+  <joint name="elbow_joint" type="revolute">
+    <parent link="shoulder_link"/>
+    <child link="forearm_link"/>
+    <origin xyz="0 0 -0.14" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-2.0" upper="0.2" effort="10" velocity="1.0"/>
+  </joint>
+
+  <!-- Gripper: 1 moving finger against 1 fixed finger, driven by a single prismatic joint -->
+  <link name="gripper_fixed_finger">
+    <visual><geometry><box size="0.02 0.02 0.06"/></geometry><material name="dark"/></visual>
+    <collision><geometry><box size="0.02 0.02 0.06"/></geometry></collision>
+    <inertial><mass value="0.05"/><inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/></inertial>
+  </link>
+  <joint name="gripper_fixed_joint" type="fixed">
+    <parent link="forearm_link"/>
+    <child link="gripper_fixed_finger"/>
+    <origin xyz="0.02 0 -0.09" rpy="0 0 0"/>
+  </joint>
+
+  <link name="gripper_moving_finger">
+    <visual><geometry><box size="0.02 0.02 0.06"/></geometry><material name="dark"/></visual>
+    <collision><geometry><box size="0.02 0.02 0.06"/></geometry></collision>
+    <inertial><mass value="0.05"/><inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/></inertial>
+  </link>
+  <joint name="gripper_joint" type="prismatic">
+    <parent link="forearm_link"/>
+    <child link="gripper_moving_finger"/>
+    <origin xyz="-0.02 0 -0.09" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="0.0" upper="0.04" effort="5" velocity="0.2"/>
+  </joint>
+
+  <!-- ===================== ros2_control ===================== -->
+  <ros2_control name="astronaut_robot_system" type="system">
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+    <joint name="left_wheel_joint">
+      <command_interface name="velocity"/>
+      <state_interface name="velocity"/>
+      <state_interface name="position"/>
+    </joint>
+    <joint name="right_wheel_joint">
+      <command_interface name="velocity"/>
+      <state_interface name="velocity"/>
+      <state_interface name="position"/>
+    </joint>
+    <joint name="shoulder_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="elbow_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="gripper_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find astronaut_robot)/config/controllers.yaml</parameters>
+    </plugin>
+  </gazebo>
+
+</robot>

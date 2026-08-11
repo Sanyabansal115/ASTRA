@@ -1,0 +1,10 @@
+# ros_gz_bridge config — maps Gazebo transport topics to ROS 2 topics.
+# The diff_drive_controller and joint_trajectory_controller already publish
+# native ROS 2 topics directly (via ros2_control), so only the LiDAR needs
+# bridging here — it comes from a Gazebo sensor plugin, not ros2_control.
+
+- ros_topic_name: "scan"
+  gz_topic_name: "scan"
+  ros_type_name: "sensor_msgs/msg/LaserScan"
+  gz_type_name: "gz.msgs.LaserScan"
+  direction: GZ_TO_ROS
