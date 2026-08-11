@@ -8,8 +8,7 @@ Standalone demo/test client for robot_task_server — sends a fixed sequence:
 This plays the same role as the "Sequence" node in the Week 9 Behavior Tree
 labs (do A, then B, then C, stop on first failure) but written as a plain
 Python script instead of standing up BehaviorTree.CPP + Groot2 — same
-end result for a 3-day timeline. It's also exactly the pattern your LLM
-teammate's node should follow: parse the instruction, then send this same
+end result. It's also exactly the pattern LLM node should follow: parse the instruction, then send this same
 sequence of RobotTask goals.
 
 Coordinates below are placeholders — swap in the real module coordinates

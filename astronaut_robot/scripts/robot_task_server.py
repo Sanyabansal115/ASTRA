@@ -10,17 +10,14 @@ Single action server exposing RobotTask, handling:
   - "fix":      sends a scripted joint trajectory to reach + touch a panel,
      then calls a part-state service to flip its visual state
 
-This is the one node your LLM teammate's code should call. It follows the
+This is the one node LLM code should call. It follows the
 same shape as reach_location_server.cpp from the Week 9 BT lab (goal in,
 feedback while running, success/failure result) and the send_joint_goal()
 pattern from panda_swing_client.py (Week 11) for the arm moves — just
 without needing full MoveIt planning, since the arm only ever reaches a
 couple of hand-picked poses.
 
-NOTE for integration:
-  - Confirm the exact attach/part-state service names + types with whoever
-    sets up the Gazebo world — the ones below are placeholders you'll swap in.
-  - This assumes Nav2 is already running and NavigateToPose is available.
+
 """
 
 import rclpy
