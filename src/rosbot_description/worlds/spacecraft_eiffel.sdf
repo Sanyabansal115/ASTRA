@@ -1,0 +1,410 @@
+<?xml version="1.0" ?>
+<sdf version="1.7">
+  <world name="eiffel_spacecraft">
+
+    <!-- Ground -->
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <plane><normal>0 0 1</normal><size>40 40</size></plane>
+          </geometry>
+          <material><ambient>0.2 0.2 0.3 1</ambient></material>
+        </visual>
+        <collision name="collision">
+          <geometry>
+            <plane><normal>0 0 1</normal><size>40 40</size></plane>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- ============================================ -->
+    <!--            TOP FLOOR - COMMAND MODULE        -->
+    <!-- ============================================ -->
+    
+    <!-- Spire (top antenna) -->
+    <model name="spire">
+      <static>true</static>
+      <pose>0 15 6 0 0 0</pose>
+      <link name="spire">
+        <visual name="visual">
+          <geometry><box><size>0.2 0.2 2</size></box></geometry>
+          <material><ambient>0.8 0.8 0.9 1</ambient></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>0.2 0.2 2</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- Command Module (Top - Blue) -->
+    <model name="command_module">
+      <static>true</static>
+      <pose>0 12 0 0 0 0</pose>
+      <link name="wall">
+        <visual name="visual">
+          <geometry><box><size>6 6 4</size></box></geometry>
+          <material><ambient>0.2 0.4 0.8 1</ambient></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>6 6 4</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- Command Module Windows -->
+    <model name="command_windows">
+      <static>true</static>
+      <pose>0 12 2 0 0 0</pose>
+      <link name="glass">
+        <visual name="visual">
+          <geometry><box><size>6.5 6.5 0.5</size></box></geometry>
+          <material><ambient>0.2 0.6 0.9 0.5</ambient></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ============================================ -->
+    <!--            MIDDLE FLOOR - AIRLOCK            -->
+    <!-- ============================================ -->
+
+    <!-- Airlock (Middle Left - Green) -->
+    <model name="airlock">
+      <static>true</static>
+      <pose>-4 8 0 0 0 0</pose>
+      <link name="wall">
+        <visual name="visual">
+          <geometry><box><size>4 4 3.5</size></box></geometry>
+          <material><ambient>0.2 0.8 0.2 1</ambient></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>4 4 3.5</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- Docking Port -->
+    <model name="docking_port">
+      <static>true</static>
+      <pose>-6 8 0 0 0 0</pose>
+      <link name="port">
+        <visual name="visual">
+          <geometry><cylinder><radius>1.2</radius><length>0.5</length></cylinder></geometry>
+          <material><ambient>0.5 0.5 0.5 1</ambient></material>
+        </visual>
+        <collision name="collision">
+          <geometry><cylinder><radius>1.2</radius><length>0.5</length></cylinder></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- Sleeping Quarters (Middle Right - Red) -->
+    <model name="sleeping_quarters">
+      <static>true</static>
+      <pose>4 8 0 0 0 0</pose>
+      <link name="wall">
+        <visual name="visual">
+          <geometry><box><size>4 4 3.5</size></box></geometry>
+          <material><ambient>0.8 0.2 0.2 1</ambient></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>4 4 3.5</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- ============================================ -->
+    <!--           ELEVATOR / CENTRAL CORE           -->
+    <!-- ============================================ -->
+
+    <!-- Main Elevator Shaft -->
+    <model name="elevator_shaft">
+      <static>true</static>
+      <pose>0 7.5 0 0 0 0</pose>
+      <link name="shaft">
+        <visual name="visual">
+          <geometry><box><size>3 3 6</size></box></geometry>
+          <material><ambient>0.6 0.6 0.7 1</ambient></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>3 3 6</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- Elevator Cab -->
+    <model name="elevator_cab">
+      <static>true</static>
+      <pose>0 7.5 2.5 0 0 0</pose>
+      <link name="cab">
+        <visual name="visual">
+          <geometry><box><size>2.5 2.5 0.8</size></box></geometry>
+          <material><ambient>0.9 0.9 0.9 1</ambient></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>2.5 2.5 0.8</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- ============================================ -->
+    <!--          SPIRAL CORRIDORS                    -->
+    <!-- ============================================ -->
+
+    <model name="spiral_corridor_top">
+      <static>true</static>
+      <pose>0 10 0 0 0 0</pose>
+      <link name="wall">
+        <visual name="visual">
+          <geometry><box><size>10 1.5 2.5</size></box></geometry>
+          <material><ambient>0.6 0.6 0.6 1</ambient></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>10 1.5 2.5</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <model name="spiral_corridor_bottom">
+      <static>true</static>
+      <pose>0 6 0 0 0 0</pose>
+      <link name="wall">
+        <visual name="visual">
+          <geometry><box><size>10 1.5 2.5</size></box></geometry>
+          <material><ambient>0.6 0.6 0.6 1</ambient></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>10 1.5 2.5</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- ============================================ -->
+    <!--          GROUND FLOOR (3 rooms)             -->
+    <!-- ============================================ -->
+
+    <!-- Cargo Bay (Bottom Left - Yellow) -->
+    <model name="cargo_bay">
+      <static>true</static>
+      <pose>-8 0 0 0 0 0</pose>
+      <link name="wall">
+        <visual name="visual">
+          <geometry><box><size>5 4 3.5</size></box></geometry>
+          <material><ambient>0.8 0.8 0.2 1</ambient></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>5 4 3.5</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- Cargo Obstacles -->
+    <model name="crate1">
+      <static>true</static>
+      <pose>-9 -1 0.3 0 0 0</pose>
+      <link name="crate">
+        <visual name="visual">
+          <geometry><box><size>0.8 0.8 0.6</size></box></geometry>
+          <material><ambient>0.4 0.2 0.1 1</ambient></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>0.8 0.8 0.6</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <model name="crate2">
+      <static>true</static>
+      <pose>-7 -1 0.3 0 0 0</pose>
+      <link name="crate">
+        <visual name="visual">
+          <geometry><box><size>0.8 0.8 0.6</size></box></geometry>
+          <material><ambient>0.4 0.2 0.1 1</ambient></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>0.8 0.8 0.6</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <model name="crate3">
+      <static>true</static>
+      <pose>-8 1 0.3 0 0 0</pose>
+      <link name="crate">
+        <visual name="visual">
+          <geometry><box><size>0.8 0.8 0.6</size></box></geometry>
+          <material><ambient>0.4 0.2 0.1 1</ambient></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>0.8 0.8 0.6</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- Medical Bay (Bottom Center - Cyan) -->
+    <model name="medical_bay">
+      <static>true</static>
+      <pose>0 0 0 0 0 0</pose>
+      <link name="wall">
+        <visual name="visual">
+          <geometry><box><size>5 4 3.5</size></box></geometry>
+          <material><ambient>0.2 0.8 0.8 1</ambient></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>5 4 3.5</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- Medical Equipment -->
+    <model name="hospital_bed1">
+      <static>true</static>
+      <pose>-0.5 0.5 0.2 0 0 0</pose>
+      <link name="bed">
+        <visual name="visual">
+          <geometry><box><size>1.2 0.6 0.3</size></box></geometry>
+          <material><ambient>0.9 0.9 0.9 1</ambient></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>1.2 0.6 0.3</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <model name="hospital_bed2">
+      <static>true</static>
+      <pose>0.5 -0.5 0.2 0 0 0</pose>
+      <link name="bed">
+        <visual name="visual">
+          <geometry><box><size>1.2 0.6 0.3</size></box></geometry>
+          <material><ambient>0.9 0.9 0.9 1</ambient></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>1.2 0.6 0.3</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <model name="medical_cart">
+      <static>true</static>
+      <pose>0 0 0.15 0 0 0</pose>
+      <link name="cart">
+        <visual name="visual">
+          <geometry><box><size>0.5 0.3 0.3</size></box></geometry>
+          <material><ambient>0.8 0.8 0.8 1</ambient></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>0.5 0.3 0.3</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- Engine Room (Bottom Right - Orange) -->
+    <model name="engine_room">
+      <static>true</static>
+      <pose>8 0 0 0 0 0</pose>
+      <link name="wall">
+        <visual name="visual">
+          <geometry><box><size>5 4 3.5</size></box></geometry>
+          <material><ambient>0.8 0.4 0.2 1</ambient></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>5 4 3.5</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- Engine Machinery -->
+    <model name="reactor_core">
+      <static>true</static>
+      <pose>8 0 0.5 0 0 0</pose>
+      <link name="reactor">
+        <visual name="visual">
+          <geometry><cylinder><radius>0.8</radius><length>1</length></cylinder></geometry>
+          <material><ambient>0.2 0.2 0.3 1</ambient></material>
+        </visual>
+        <collision name="collision">
+          <geometry><cylinder><radius>0.8</radius><length>1</length></cylinder></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <model name="engine_console1">
+      <static>true</static>
+      <pose>9.5 0.8 0.3 0 0 0</pose>
+      <link name="console">
+        <visual name="visual">
+          <geometry><box><size>0.4 0.4 0.6</size></box></geometry>
+          <material><ambient>0.1 0.1 0.1 1</ambient></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>0.4 0.4 0.6</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <model name="engine_console2">
+      <static>true</static>
+      <pose>6.5 -0.8 0.3 0 0 0</pose>
+      <link name="console">
+        <visual name="visual">
+          <geometry><box><size>0.4 0.4 0.6</size></box></geometry>
+          <material><ambient>0.1 0.1 0.1 1</ambient></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>0.4 0.4 0.6</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- ============================================ -->
+    <!--          GROUND FLOOR CORRIDORS             -->
+    <!-- ============================================ -->
+
+    <model name="ground_corridor">
+      <static>true</static>
+      <pose>0 -2.5 0 0 0 0</pose>
+      <link name="wall">
+        <visual name="visual">
+          <geometry><box><size>20 1.5 2.5</size></box></geometry>
+          <material><ambient>0.5 0.5 0.5 1</ambient></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>20 1.5 2.5</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- Vertical Corridors -->
+    <model name="vertical_corridor_left">
+      <static>true</static>
+      <pose>-4 4 0 0 0 0</pose>
+      <link name="wall">
+        <visual name="visual">
+          <geometry><box><size>1.5 5 2.5</size></box></geometry>
+          <material><ambient>0.5 0.5 0.5 1</ambient></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>1.5 5 2.5</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <model name="vertical_corridor_right">
+      <static>true</static>
+      <pose>4 4 0 0 0 0</pose>
+      <link name="wall">
+        <visual name="visual">
+          <geometry><box><size>1.5 5 2.5</size></box></geometry>
+          <material><ambient>0.5 0.5 0.5 1</ambient></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>1.5 5 2.5</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+  </world>
+</sdf>
