@@ -1,0 +1,14 @@
+# Windows metadata
+*Zone.Identifier
+*.Zone.Identifier
+
+# Build artifacts
+build/
+install/
+log/
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE
+.vscode/
