@@ -1,0 +1,63 @@
+# ASTRA - semantic location table for the LLM navigation agent.
+#
+# This is the "semantic-to-coordinate mapping" required by the project brief:
+# it is the ONLY place goal coordinates live for the LLM side.
+#
+# Room names and coordinates are reused from the team's existing C++ menu
+# client, src/nav2_client/src/navigation_client.cpp (lines 14-21), so the LLM
+# drives the robot to exactly the same places as the manual menu.
+#
+# Three goals had to be nudged because the C++ value lands inside a static
+# obstacle in src/rosbot_description/worlds/spacecraft_clean.sdf; the original
+# value is kept in the comment next to each one. Nothing else was changed.
+#
+# Poses are in the `map` frame. x/y in metres, yaw in radians.
+
+rooms:
+  command_module:
+    x: -7.0
+    y: 6.0
+    yaw: 0.0
+    description: "Flight deck at the top-left of the ship"
+    aliases: ["command module", "cockpit", "bridge", "flight deck", "control room", "command centre", "command center"]
+
+  sleeping_quarters:
+    x: 0.0
+    y: 6.0
+    yaw: 0.0
+    description: "Crew bunks, top-centre of the ship"
+    aliases: ["sleeping quarters", "crew quarters", "bedroom", "bunks", "sleeping area", "dormitory", "crew cabin"]
+
+  airlock:
+    x: 7.0
+    y: 6.0
+    yaw: 0.0
+    description: "Airlock and docking hatch, top-right of the ship"
+    aliases: ["air lock", "docking hatch", "hatch", "exit hatch", "docking port"]
+
+  cargo_bay:
+    # navigation_client.cpp uses y = 0.0, but the model `crate3` is a 0.6 m box
+    # centred exactly on (-7.0, 0.0), so that goal is inside an obstacle.
+    x: -7.0
+    y: 1.5
+    yaw: 0.0
+    description: "Storage bay with supply crates, bottom-left of the ship"
+    aliases: ["cargo bay", "cargo hold", "storage", "storage bay", "supply room", "supplies", "warehouse", "cargo"]
+
+  medical_bay:
+    # navigation_client.cpp uses y = 0.0, which sits in the 0.5 m gap between
+    # `hospital_bed1` and `hospital_bed2` - inside the costmap inflation.
+    x: 0.0
+    y: 1.5
+    yaw: 0.0
+    description: "Medical bay with two hospital beds, centre of the ship"
+    aliases: ["medical bay", "medbay", "med bay", "medical", "infirmary", "sick bay", "sickbay", "hospital", "clinic", "first aid"]
+
+  engine_room:
+    # navigation_client.cpp uses y = 0.0, which is the centre of
+    # `engine_machine`, a 0.6 m radius cylinder.
+    x: 7.0
+    y: 1.5
+    yaw: 0.0
+    description: "Engine room with the main reactor, bottom-right of the ship"
+    aliases: ["engine room", "engineering", "engine bay", "engines", "reactor", "reactor room", "machine room", "propulsion"]

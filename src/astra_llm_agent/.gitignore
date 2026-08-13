@@ -1,0 +1,19 @@
+# --- secrets -----------------------------------------------------------------
+# config/openai.env holds the real Mistral key and must NEVER be committed.
+# Only config/openai.env.example (empty) is tracked.
+config/openai.env
+*.env.local
+config/*.secret
+.env
+
+# --- python ------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+
+# --- colcon ------------------------------------------------------------------
+build/
+install/
+log/
