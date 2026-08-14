@@ -1,0 +1,5 @@
+# Exclude Windows ADS files
+*Zone.Identifier
+*.pyc
+__pycache__/
+.DS_Store

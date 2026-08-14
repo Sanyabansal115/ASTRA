@@ -1,0 +1,39 @@
+# The six spacecraft modules, in the map frame: [x, y, yaw_radians]
+#
+# These coordinates are NOT hand-typed. They come from tools/generate_world.py,
+# which builds the world and map from the same geometry and proves by BFS (with
+# 0.22m robot inflation) that every pose is collision-free and mutually reachable.
+# If you move a wall or obstacle, re-run that script instead of editing by hand.
+# Keep these keys byte-identical everywhere they're referenced (this file,
+# the LLM agent, the report) - the workflow doc's "keep names exactly the
+# same" rule exists because a typo here fails silently at runtime.
+
+locations:
+  command_module:    [-7.0, 6.5, 0.0]   # start / "copilot" spot
+  sleeping_quarters: [ 0.0, 6.2, 0.0]   # where the robot "rests"
+  airlock:           [ 7.0, 6.5, 0.0]   # main demo goal / EVA prep
+  cargo_bay:         [-7.0, 0.0, 0.0]   # storage, messiest obstacles
+  medical_bay:       [ 0.0, 0.0, 0.0]   # medical equipment obstacles
+  engine_room:       [ 7.0, 0.3, 0.0]   # "fix the spacecraft" spot
+
+# Natural-language aliases -> canonical location key.
+# The LLM agent can use these directly, or ignore them and do its own
+# matching. Either way the canonical keys above are what Nav2 gets.
+aliases:
+  cockpit: command_module
+  bridge: command_module
+  control_room: command_module
+  bedroom: sleeping_quarters
+  quarters: sleeping_quarters
+  sleep: sleeping_quarters
+  eva: airlock
+  airlock_door: airlock
+  cargo: cargo_bay
+  storage: cargo_bay
+  hold: cargo_bay
+  medbay: medical_bay
+  infirmary: medical_bay
+  medical: medical_bay
+  engine: engine_room
+  engineering: engine_room
+  engines: engine_room
