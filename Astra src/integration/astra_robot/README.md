@@ -101,10 +101,9 @@ Arrival "task reactions" (the Engine Room repair message, etc.) live in
 
 ---
 
-## Generating the SLAM map (required by your rubric)
+## Generating the SLAM map (required for submission)
 
-The shipped map is generated geometrically so you can work immediately. Your
-rubric's *Mapping & Localization* criterion wants a real `slam_toolbox` map:
+The shipped map is generated geometrically so you can work immediately. The assignment's *Mapping & Localization* criterion requires a real `slam_toolbox` map:
 
 ```bash
 # Terminal 1
@@ -121,7 +120,7 @@ cd ~/astra_ws && colcon build && source install/setup.bash
 
 ---
 
-## Architecture (for your report's System Architecture section)
+## Architecture (System Architecture section reference)
 
 ```
    LLM agent  ──/astra/go_to──▶  astra_navigator
