@@ -19,9 +19,10 @@
 -->
 <robot name="astra_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <!-- Tune this if the astronaut renders huge or invisible. The glb's native
-       units are unknown; 1.0 is the starting guess. Try 0.05 if it's giant. -->
-  <xacro:property name="astronaut_scale" value="1.0"/>
+  <!-- THE ONE KNOB for the astronaut: how tall it stands, in metres, from sole
+       to the top of the helmet. The mesh's units are no longer a mystery - see
+       the ASTRONAUT SKIN section for the measured figures this converts with. -->
+  <xacro:property name="astronaut_height" value="0.45"/>
 
   <material name="grey"><color rgba="0.6 0.6 0.6 1"/></material>
   <material name="dark"><color rgba="0.15 0.15 0.15 1"/></material>
@@ -109,20 +110,79 @@
   </gazebo>
 
   <!-- ============ ASTRONAUT SKIN (visual only, no collision) ============ -->
+  <!--
+    MEASURED, NOT GUESSED. The numbers that used to be here were read off the
+    glb's raw vertex data, but Gazebo also applies the glb's node transforms,
+    so what it actually draws is a different size and a different way up. These
+    are the real bounds of the mesh as gz-sim loads it at scale 1.0, read off a
+    headless camera render:
+
+        sole -> top of helmet    1.7009 m   (it is a LIFE-SIZE model)
+        arm span, T-pose         1.6094 m
+        body depth               0.9922 m
+        soles sit at z = +0.0023 - the origin is at the FEET, not the head
+
+    It also loads ALREADY UPRIGHT (Z-up), facing -Y. So the only rotation it
+    needs is a quarter turn about Z to face the robot's +X. The old
+    rpy="1.5708 0 0" is exactly what laid it on its side, and the old
+    mesh_drop raise then threw it clear of the base.
+
+    MESH: cute_astronaut_textured.glb, which needs cute_astronaut_texture.png
+    beside it. Both come from cute_astronaut.glb.orig; the plain
+    cute_astronaut.glb is a re-export that lost its texture entirely and only
+    renders flat grey. setup.py installs all of meshes/*, so the png travels
+    with the glb automatically.
+  -->
+  <xacro:property name="deck_z"      value="0.21"/>      <!-- top of the base box -->
+  <xacro:property name="mesh_height" value="1.7009"/>
+  <xacro:property name="astronaut_scale" value="${astronaut_height / mesh_height}"/>
+
+  <!-- Mesh bounds at scale 1.0 AFTER the quarter turn, in the robot's own axes:
+         x (fore/aft)   -0.5355 .. +0.4567   centre -0.0394
+         y (left/right) -0.8350 .. +0.7744   centre -0.0303
+       Shifting by minus the centre stands the astronaut on the robot's own
+       axis instead of a centimetre off to one side. -->
+  <xacro:property name="astro_dx" value="${ 0.0394 * astronaut_scale}"/>
+  <xacro:property name="astro_dy" value="${ 0.0303 * astronaut_scale}"/>
+  <xacro:property name="astro_dz" value="${-0.0023 * astronaut_scale}"/>
+
   <link name="astronaut_visual">
     <visual>
-      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <!-- NO <material> element here, deliberately: a material tag would
+           override the glb's own PBR materials and put us straight back to a
+           flat grey figure with no visor, flags or NASA badge. -->
+      <origin xyz="${astro_dx} ${astro_dy} ${astro_dz}" rpy="0 0 ${pi/2}"/>
       <geometry>
-        <mesh filename="package://astra_robot/meshes/cute_astronaut.glb"
+        <mesh filename="package://astra_robot/meshes/cute_astronaut_textured.glb"
               scale="${astronaut_scale} ${astronaut_scale} ${astronaut_scale}"/>
       </geometry>
     </visual>
+    <!-- Negligible mass: this link is decoration. Without an explicit inertial
+         the URDF->SDF conversion can lump a default mass in at the mount point
+         and raise the centre of mass enough to make the robot pitch. -->
+    <inertial>
+      <mass value="0.001"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
+    </inertial>
   </link>
+  <!-- Straight onto the deck. The mesh's origin is at the soles, so there is no
+       "drop" to compensate for any more - the astronaut just stands here. -->
   <joint name="astronaut_visual_joint" type="fixed">
     <parent link="base_link"/>
     <child link="astronaut_visual"/>
-    <origin xyz="0 0 0.21" rpy="0 0 0"/>
+    <origin xyz="0 0 ${deck_z}" rpy="0 0 0"/>
   </joint>
+
+  <!-- Draw the astronaut for the GUI camera but hide it from the LiDAR. The
+       sensor's visibility_mask below clears bit 0, so a visual flagged as bit 0
+       only is skipped by the ray cast while everything else (walls, crates,
+       which keep the default 0xFFFFFFFF) is still seen. Without this the
+       astronaut's legs stand in the LiDAR plane at z=0.30 and blind it. -->
+  <gazebo reference="astronaut_visual">
+    <visual>
+      <visibility_flags>1</visibility_flags>
+    </visual>
+  </gazebo>
 
   <!-- ============ LIDAR ============ -->
   <link name="lidar_link">
@@ -150,6 +210,10 @@
       <update_rate>10</update_rate>
       <always_on>true</always_on>
       <visualize>true</visualize>
+      <!-- 0xFFFFFFFE - every visibility bit except bit 0. The astronaut visual
+           is flagged bit 0 only, so this ray cast ignores it; walls and crates
+           keep the default flags and are still detected. -->
+      <visibility_mask>4294967294</visibility_mask>
       <lidar>
         <scan>
           <horizontal>
