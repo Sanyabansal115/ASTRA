@@ -12,6 +12,16 @@
       <render_engine>ogre2</render_engine>
     </plugin>
 
+    <!-- ====== PHYSICS / ARTIFICIAL GRAVITY ======
+         The station's rotating hab ring / gravity generators keep this at
+         a standard 1g so the diff-drive rover (wheels need traction) and
+         Nav2 tuning both work without modification. -->
+    <physics name="1ms" type="dartsim">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+    <gravity>0 0 -9.81</gravity>
+
     <light name="sun" type="directional">
       <pose>0 0 10 0 0 0</pose>
       <direction>0 -0.3 -1</direction>
