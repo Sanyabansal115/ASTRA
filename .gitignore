@@ -1,0 +1,17 @@
+# ROS 2 build artifacts
+build/
+install/
+log/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+
+# Environment / secrets
+src/astra_llm_agent/config/openai.env
+
+# OS
+.DS_Store
+Thumbs.db

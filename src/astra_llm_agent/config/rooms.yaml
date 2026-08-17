@@ -1,0 +1,66 @@
+# ASTRA - semantic location table for the LLM navigation agent.
+#
+# This is the "semantic-to-coordinate mapping" required by the project brief:
+# the ONLY place goal coordinates live for the LLM side.
+#
+# COORDINATES ARE GENERATED, NOT HAND-TYPED.
+# They are copied from astra_robot/config/locations.yaml, which is produced by
+# astra_robot/tools/generate_world.py - the script that builds the Gazebo world
+# and the occupancy map from ONE geometry definition and then proves by BFS (at
+# full 0.35 m costmap inflation) that every pose is collision-free and mutually
+# reachable.
+#
+# If the world changes, re-run that script and re-copy. Do NOT hand-edit
+# coordinates here: the previous version of this file was tuned against an older
+# world whose corridor walls sealed every doorway.
+#
+# Aliases extend the LLM branch's original list with singular forms that were
+# missing - notably "engine" (so the workflow doc's own example, "go fix the
+# engine", resolves) and "sleep"/"rest". Alias collisions raise at start-up in
+# RoomTable._build_alias_index, and this set is verified collision-free.
+#
+# Poses are in the `map` frame. x/y in metres, yaw in radians.
+
+rooms:
+  command_module:
+    x: -7.0
+    y: 6.5
+    yaw: 0.0
+    description: "Flight deck at the top-left of the ship"
+    aliases: ["command module", "cockpit", "bridge", "flight deck", "control room", "command centre", "command center", "command", "helm"]
+
+  sleeping_quarters:
+    x: 0.0
+    y: 6.2
+    yaw: 0.0
+    description: "Crew bunks, top-centre of the ship"
+    aliases: ["sleeping quarters", "crew quarters", "bedroom", "bunks", "sleeping area", "dormitory", "crew cabin", "sleep", "rest", "quarters", "bunk"]
+
+  airlock:
+    x: 7.0
+    y: 6.5
+    yaw: 0.0
+    description: "Airlock and docking hatch, top-right of the ship"
+    aliases: ["air lock", "docking hatch", "hatch", "exit hatch", "docking port", "eva", "spacewalk"]
+
+  cargo_bay:
+    x: -7.0
+    y: 0.0
+    yaw: 0.0
+    description: "Storage bay with supply crates, bottom-left of the ship"
+    aliases: ["cargo bay", "cargo hold", "storage", "storage bay", "supply room", "supplies", "warehouse", "cargo", "crates", "hold"]
+
+  medical_bay:
+    x: 0.0
+    y: 0.0
+    yaw: 0.0
+    description: "Medical bay with two hospital beds, bottom-centre of the ship"
+    aliases: ["medical bay", "medbay", "med bay", "medical", "infirmary", "sick bay", "sickbay", "hospital", "clinic", "first aid", "medic"]
+
+  engine_room:
+    x: 7.0
+    y: 0.3
+    yaw: 0.0
+    description: "Engine room with the main reactor, bottom-right of the ship"
+    aliases: ["engine room", "engineering", "engine bay", "engines", "reactor", "reactor room", "machine room", "propulsion", "engine", "thrusters"]
+
